@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grocery Budget Assistant — Medium-Fidelity Prototype</title>
+
+    <style>
+:root {
+    --ink:#243041;
+    --muted:#667386;
+    --line:#dbe1e8;
+    --bg:#f0f2f5;
+    --blue:#2464aa;
+    --light:#eaf2fb;
+    --green:#20744e;
+    --red:#ae4242;
+    --white:#fff;
+}
+* {
+    box-sizing:border-box;
+}
+body {
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+}
+.page {
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+    padding:22px;
+}
+.outside {
+    width:250px;
+    line-height:1.5;
+}
+.outside h1 {
+    font-size:22px;
+    line-height:1.15;
+    margin:0 0 12px;
+}
+.outside p {
+    font-size:14px;
+    color:#566274;
+}
+.outside .hint {
+    background:white;
+    border:1px solid var(--line);
+    padding:12px;
+    border-radius:10px;
+    font-size:13px;
+}
+.phone {
+    width:400px;
+    height:min(825px,95vh);
+    min-height:600px;
+    border:8px solid #252b35;
+    border-radius:40px;
+    background:#fff;
+    box-shadow:0 18px 45px #18202a25;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+}
+.notch {
+    height:21px;
+    min-height:21px;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.notch:before {
+    content:'';
+    width:93px;
+    height:16px;
+    border-radius:0 0 14px 14px;
+    background:#252b35;
+}
+.top {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:11px 17px;
+    border-bottom:1px solid var(--line);
+}
+.brand {
+    font-weight:bold;
+    font-size:16px;
+}
+.brand span {
+    color:var(--blue);
+}
+.top small {
+    color:var(--muted);
+}
+.screen {
+    overflow:auto;
+    flex:1;
+    padding:17px 17px 27px;
+}
+.bottom {
+    height:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+}
+.bottom:after {
+    content:'';
+    height:4px;
+    width:120px;
+    border-radius:9px;
+    background:#252b35;
+}
+.header {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+}
+.header h2 {
+    font-size:20px;
+    margin:0;
+}
+.back {
+    border:none;
+    background:none;
+    padding:5px 7px;
+    color:var(--blue);
+    font-size:20px;
+    cursor:pointer;
+}
+.sub {
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.5;
+    margin:4px 0 14px;
+}
+.summary {
+    background:#f7f9fc;
+    border:1px solid var(--line);
+    padding:15px;
+    border-radius:10px;
+    margin:12px 0 15px;
+}
+.summaryline {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:6px 0;
+    font-size:14px;
+}
+.summaryline.big {
+    font-size:17px;
+    font-weight:bold;
+}
+.summaryline .value {
+    font-variant-numeric:tabular-nums;
+}
+.item {
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+    margin:10px 0;
+    background:white;
+}
+.itemhead {
+    display:flex;
+    gap:10px;
+}
+.emoji {
+    height:49px;
+    width:49px;
+    flex-shrink:0;
+    border-radius:9px;
+    background:#eef2f6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+}
+.itemmain {
+    flex:1;
+    min-width:0;
+}
+.itemtitle {
+    font-size:14px;
+    font-weight:bold;
+    margin:0 0 4px;
+}
+.itemmeta {
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+}
+.price {
+    font-weight:bold;
+    font-size:14px;
+    white-space:nowrap;
+}
+.itemfoot {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:11px;
+    gap:8px;
+}
+.smallbtn {
+    padding:7px 9px;
+    border:1px solid #a9bbcd;
+    background:#fff;
+    border-radius:7px;
+    color:var(--blue);
+    font-weight:bold;
+    font-size:12px;
+    cursor:pointer;
+}
+.smallbtn[disabled] {
+    opacity:.4;
+    cursor:not-allowed;
+}
+.locklabel {
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    color:#536274;
+    cursor:pointer;
+}
+.locklabel input {
+    accent-color:var(--blue);
+}
+button.primary {
+    width:100%;
+    padding:13px 12px;
+    background:var(--blue);
+    color:white;
+    border:0;
+    border-radius:9px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:12px;
+}
+button.secondary {
+    width:100%;
+    padding:11px 12px;
+    background:white;
+    color:var(--blue);
+    border:1px solid #9db7d2;
+    border-radius:9px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:9px;
+}
+button:focus-visible,input:focus-visible {
+    outline:3px solid #f1be68;
+    outline-offset:2px;
+}
+.fieldlabel {
+    font-size:13px;
+    font-weight:bold;
+    display:block;
+    margin:14px 0 8px;
+}
+.moneyinput {
+    display:flex;
+    align-items:center;
+    border:1px solid #9daebf;
+    border-radius:9px;
+    overflow:hidden;
+    background:white;
+}
+.moneyinput span {
+    padding-left:14px;
+    font-size:20px;
+    color:#536274;
+}
+.moneyinput input {
+    width:100%;
+    border:0;
+    padding:14px 10px;
+    font-size:21px;
+    background-color:#ffffff;
+    color:#17212f;
+    -webkit-text-fill-color:#17212f;
+    color-scheme:light;
+    outline:none;
+}
+.micro {
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+}
+.note {
+    border:1px solid #c5d7e9;
+    background:#f0f6fc;
+    color:#375f8c;
+    padding:11px;
+    border-radius:8px;
+    font-size:12px;
+    line-height:1.5;
+    margin:11px 0;
+}
+.note.warn {
+    background:#fff8eb;
+    color:#815d19;
+    border-color:#e8d2a7;
+}
+.note.success {
+    background:#edf8f1;
+    color:#216842;
+    border-color:#bde2cb;
+}
+.switchrow {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+    padding:10px 0;
+    border-top:1px solid #e7ebf0;
+}
+.switchrow:first-child {
+    border-top:0;
+}
+.swapbody {
+    flex:1;
+}
+.swapname {
+    font-size:13px;
+    font-weight:bold;
+}
+.swapdesc {
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.4;
+    margin-top:4px;
+}
+.savings {
+    font-size:12px;
+    color:var(--green);
+    font-weight:bold;
+    margin-top:5px;
+}
+.swapright {
+    text-align:right;
+    white-space:nowrap;
+}
+.swapright input {
+    height:19px;
+    width:19px;
+    accent-color:var(--blue);
+    cursor:pointer;
+}
+.textlink {
+    display:inline-block;
+    background:transparent;
+    border:0;
+    padding:7px 0;
+    color:var(--blue);
+    font-weight:bold;
+    font-size:12px;
+    cursor:pointer;
+}
+.comparetitle {
+    font-size:13px;
+    color:var(--muted);
+    margin:7px 0 12px;
+}
+.comparegrid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.productbox {
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+}
+.productbox.selected {
+    border:2px solid var(--blue);
+    padding:11px;
+    background:#f8fbff;
+}
+.productemoji {
+    font-size:32px;
+    margin-bottom:8px;
+}
+.productname {
+    font-weight:bold;
+    font-size:13px;
+    min-height:50px;
+}
+.productprice {
+    font-weight:bold;
+    font-size:19px;
+    margin:8px 0;
+}
+.productlabel {
+    font-size:11px;
+    color:var(--muted);
+}
+.comparetable {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:16px;
+    font-size:12px;
+}
+.comparetable th,.comparetable td {
+    border-bottom:1px solid var(--line);
+    padding:10px 5px;
+    text-align:center;
+}
+.comparetable td:first-child {
+    text-align:left;
+    font-weight:bold;
+    color:#4b5867;
+}
+.comparetable th {
+    font-size:12px;
+}
+.toolbar {
+    display:flex;
+    gap:8px;
+}
+.toolbar .secondary,.toolbar .primary {
+    flex:1;
+}
+.tiny {
+    font-size:11px;
+    color:var(--muted);
+}
+.tag {
+    font-size:11px;
+    padding:3px 7px;
+    border-radius:20px;
+    background:#edf6f0;
+    color:var(--green);
+    display:inline-block;
+    font-weight:bold;
+}
+.empty {
+    text-align:center;
+    color:var(--muted);
+    padding:18px;
+    font-size:13px;
+}
+.divider {
+    height:1px;
+    background:var(--line);
+    margin:13px 0;
+}
+.sectionhead {
+    font-size:15px;
+    font-weight:bold;
+    margin:18px 0 8px;
+}
+.choice {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:7px 0;
+    font-size:13px;
+}
+.choice input {
+    accent-color:var(--blue);
+}
+@media(max-width:760px) {
+    .page {
+        padding:0;
+        display:block;
+    }
+    .outside {
+        display:none;
+    }
+    .phone {
+        width:100%;
+        height:100dvh;
+        min-height:0;
+        border:0;
+        border-radius:0;
+        box-shadow:none;
+    }
+    .notch {
+        display:none;
+    }
+    .bottom {
+        height:16px;
+    }
+    .screen {
+        padding:16px 17px 28px;
+    }
+}
+
+/* Controls outside the mock phone are for prototype testing only. */
+.reset-button {
+    display: block;
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media (max-width: 760px) {
+    .page {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .outside {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+    }
+
+    .outside h1,
+    .outside .hint {
+        display: none;
+    }
+
+    .reset-button {
+        margin: 0;
+        padding: 7px 10px;
+    }
+
+    .phone {
+        height: calc(100dvh - 46px);
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Information and testing controls outside the simulated phone. -->
+        <aside class="outside">
+            <h1>Grocery Budget Assistant</h1>
+
+            <div class="hint">
+                <strong>Try these tasks:</strong>
+                <ol>
+                    <li>Enter a target budget of $20.</li>
+                    <li>Review the suggested swaps.</li>
+                    <li>Compare prices and nutrition.</li>
+                    <li>Reject a swap or lock a product.</li>
+                    <li>Apply your selections and review the updated total.</li>
+                </ol>
+            </div>
+
+            <button id="resetPrototype" class="reset-button" type="button">
+                Reset Prototype
+            </button>
+        </aside>
+
+        <!-- Interactive medium-fidelity grocery app. -->
+        <main class="phone" aria-label="Interactive grocery shopping prototype">
+            <div class="notch"></div>
+            <div class="top">
+                <div class="brand"><span>●</span> Grocery Cart</div>
+            </div>
+            <div id="screen" class="screen" aria-live="polite"></div>
+            <div class="bottom"></div>
+        </main>
+    </div>
+
+    <script>
+const base = [
+    { id: 'milk', name: 'Organic Whole Milk', brand: 'Good & Gather', emoji: '🥛', size: '64 fl oz', price: 5.49, cal: 150, protein: 8, carbs: 12, fat: 8, alt: { name: 'Whole Milk', brand: 'Good & Gather', size: '64 fl oz', price: 3.49, cal: 150, protein: 8, carbs: 12, fat: 8 } },
+    { id: 'eggs', name: 'Cage-Free Large Eggs', brand: 'Good & Gather', emoji: '🥚', size: '12 count', price: 4.79, cal: 70, protein: 6, carbs: 0, fat: 5, alt: { name: 'Large Eggs', brand: 'Good & Gather', size: '12 count', price: 3.29, cal: 70, protein: 6, carbs: 0, fat: 5 } },
+    { id: 'bread', name: 'Whole Grain Bread', brand: 'Dave’s Killer Bread', emoji: '🍞', size: '20 oz', price: 5.99, cal: 110, protein: 5, carbs: 22, fat: 2, alt: { name: '100% Whole Wheat Bread', brand: 'Good & Gather', size: '20 oz', price: 2.79, cal: 100, protein: 4, carbs: 19, fat: 1.5 } },
+    { id: 'yogurt', name: 'Plain Greek Yogurt', brand: 'Fage', emoji: '🥣', size: '32 oz', price: 6.49, cal: 90, protein: 16, carbs: 5, fat: 0, alt: { name: 'Plain Greek Yogurt', brand: 'Good & Gather', size: '32 oz', price: 4.49, cal: 90, protein: 16, carbs: 5, fat: 0 } },
+    { id: 'banana', name: 'Bananas', brand: 'Fresh Produce', emoji: '🍌', size: '4 count', price: 1.79, cal: 105, protein: 1, carbs: 27, fat: 0, alt: null }
+];
+const cash = n => '$' + n.toFixed(2);
+const total = () => base.reduce((s, i) => s + (state.applied.has(i.id) && i.alt ? i.alt.price : i.price), 0);
+const saved = i => i.alt ? i.price - i.alt.price : 0;
+const state = { page: 'cart', budget: '20.00', locks: new Set(), chosen: new Set(), applied: new Set(), compare: null, returnTo: 'results', generated: false, notice: '' };
+const app = document.getElementById('screen');
+const item = id => base.find(i => i.id === id);
+const available = () => base.filter(i => i.alt && !state.applied.has(i.id) && !state.locks.has(i.id));
+const projected = () => total() - Array.from(state.chosen).reduce((sum, id) => sum + saved(item(id)), 0);
+function head(title, back) { return `<div class="header">${back ? '<button class="back" data-action="back" aria-label="Back">‹</button>' : ''}<h2>${title}</h2>
+            </div>`; }
+function summary(amount, caption) { return `<div class="summary">
+            <div class="summaryline big">
+            <span>${caption}</span>
+            <span class="value">${cash(amount)}</span>
+            </div>${state.page === 'cart' ? '<div class="summaryline"><span>Items in cart</span><span>5</span></div>' : ''}</div>`; }
+function render() {
+    let h = '';
+    if (state.page === 'cart') {
+        h += head('Your Cart', false) + '<p class="sub">Review your items and find lower-cost alternatives.</p>' + summary(total(), 'Current total');
+        if (state.applied.size)
+            h += `<div class="note success">You saved ${cash(base.reduce((s, i) => s + i.price, 0) - total())} with your applied substitutions.</div>`;
+        for (const i of base) {
+            let current = state.applied.has(i.id) ? i.alt : i;
+            h += `<article class="item">
+            <div class="itemhead">
+            <div class="emoji">${i.emoji}</div>
+            <div class="itemmain">
+            <p class="itemtitle">${current.name}</p>
+            <div class="itemmeta">${current.brand}<br>${current.size}</div>
+            </div>
+            <div class="price">${cash(current.price)}</div>
+            </div>
+            <div class="itemfoot">
+            <button class="smallbtn" data-action="compare" data-id="${i.id}" ${!i.alt || state.applied.has(i.id) ? 'disabled' : ''}>${state.applied.has(i.id) ? 'Swapped' : i.alt ? 'Compare alternatives' : 'No alternatives'}</button>
+            <label class="locklabel">
+            <input type="checkbox" data-action="lock" data-id="${i.id}" ${state.locks.has(i.id) ? 'checked' : ''} ${state.applied.has(i.id) ? 'disabled' : ''}> Lock item</label>
+            </div>
+            </article>`;
+        }
+        h += '<button class="primary" data-action="budget">Find Ways to Save</button>';
+    }
+    else if (state.page === 'budget') {
+        h += head('Set Your Budget', true);
+        h += `<p class="sub">
+            Enter a target total. We will suggest lower-cost replacements for items you have not locked.
+        </p>`;
+        h += summary(total(), 'Current cart total');
+        h += `<label for="budget" class="fieldlabel">Your target budget</label>
+            <div class="moneyinput">
+                <span>$</span>
+                <input id="budget" type="number" min="0" max="999" step="0.01"
+                    value="${state.budget}" inputmode="decimal">
+            </div>
+            <p class="micro">
+                You can review every suggested change before applying it.
+                No changes are made automatically.
+            </p>
+            <button class="primary" data-action="generate">Find Substitutions</button>
+            <button class="secondary" data-action="cart">Back to Cart</button>`;
+    }
+    else if (state.page === 'results') {
+        let budget = Number(state.budget), p = projected(), possible = total() - available().reduce((s, i) => s + saved(i), 0);
+        h += head('Suggested Substitutions', true) + `<p class="sub">Target: <strong>${cash(budget)}</strong>. Review the suggested changes before applying them.</p>
+            <div class="summary">
+            <div class="summaryline">
+            <span>Current cart</span>
+            <strong>${cash(total())}</strong>
+            </div>
+            <div class="summaryline">
+            <span>Selected savings</span>
+            <strong style="color:var(--green)">${cash(total() - p)}</strong>
+            </div>
+            <div class="divider">
+            </div>
+            <div class="summaryline big">
+            <span>Projected total</span>
+            <span>${cash(p)}</span>
+            </div>
+            </div>`;
+        h += p <= budget ? '<div class="note success">Your selected substitutions meet the target budget.</div>' : `<div class="note warn">${possible > budget ? 'The available substitutions cannot reach this target. The lowest possible total is ' + cash(possible) + '.' : 'Your current selections do not reach the budget. Try accepting additional suggestions.'}</div>`;
+        h += '<h3 class="sectionhead">Review proposed swaps</h3>';
+        let swaps = base.filter(i => i.alt && !state.applied.has(i.id));
+        if (!swaps.length)
+            h += '<div class="empty">No more alternatives are available for this cart.</div>';
+        for (const i of swaps) {
+            let locked = state.locks.has(i.id);
+            h += `<article class="item">
+            <div class="switchrow">
+            <div class="emoji">${i.emoji}</div>
+            <div class="swapbody">
+            <div class="swapname">${i.name}</div>
+            <div class="swapdesc">${cash(i.price)} → ${i.alt.name} ${cash(i.alt.price)}</div>
+            <div class="savings">Save ${cash(saved(i))}</div>
+            <button class="textlink" data-action="compare" data-id="${i.id}">Compare products ›</button>
+            </div>
+            <div class="swapright">
+            <input type="checkbox" aria-label="Accept ${i.alt.name} swap" data-action="choose" data-id="${i.id}" ${state.chosen.has(i.id) ? 'checked' : ''} ${locked ? 'disabled' : ''}>
+            <div class="tiny">${locked ? 'Locked' : 'Accept'}</div>
+            </div>
+            </div>
+            <label class="locklabel">
+            <input type="checkbox" data-action="lock" data-id="${i.id}" ${locked ? 'checked' : ''}> Lock original item</label>
+            </article>`;
+        }
+        h += '<button class="primary" data-action="apply" ' + (state.chosen.size ? '' : 'disabled') + '>Apply Selected Substitutions</button><button class="secondary" data-action="budget">Change Budget</button>';
+    }
+    else if (state.page === 'compare') {
+        let i = item(state.compare), a = i.alt;
+        h += head('Compare Products', true) + `<p class="comparetitle">Review price, quantity, and nutrition before selecting a replacement.</p>
+            <div class="comparegrid">
+            <div class="productbox">
+            <div class="productemoji">${i.emoji}</div>
+            <div class="productname">${i.name}</div>
+            <div class="productlabel">Current product</div>
+            <div class="productprice">${cash(i.price)}</div>
+            <div class="productlabel">${i.brand}</div>
+            </div>
+            <div class="productbox selected">
+            <div class="productemoji">${i.emoji}</div>
+            <div class="productname">${a.name}</div>
+            <div class="productlabel">Suggested alternative</div>
+            <div class="productprice">${cash(a.price)}</div>
+            <div class="productlabel">${a.brand}</div>
+            </div>
+            </div>
+            <div class="note success">Potential savings: <strong>${cash(saved(i))}</strong>
+            </div>
+            <table class="comparetable">
+            <thead>
+            <tr>
+            <th>Product details</th>
+            <th>Current</th>
+            <th>Alternative</th>
+            </tr>
+            </thead>
+            <tbody>${[['Package size', i.size, a.size], ['Calories', i.cal, a.cal], ['Protein', i.protein + ' g', a.protein + ' g'], ['Carbs', i.carbs + ' g', a.carbs + ' g'], ['Fat', i.fat + ' g', a.fat + ' g']].map(row => `<tr>${row.map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>
+            <button class="primary" data-action="selectcomparison" ${state.locks.has(i.id) ? 'disabled' : ''}>${state.chosen.has(i.id) ? 'Remove from selected swaps' : 'Select this alternative'}</button>${state.locks.has(i.id) ? '<p class="micro">Unlock this item in the cart or recommendations to select a swap.</p>' : ''}<button class="secondary" data-action="back">Back to ${state.returnTo === 'cart' ? 'Cart' : 'Recommendations'}</button>`;
+    }
+    else if (state.page === 'done') {
+        let old = base.reduce((s, i) => s + i.price, 0);
+        h += head('Cart Updated', false) + `<div class="note success">
+            <strong>Changes applied.</strong> Your cart now reflects the swaps you selected.</div>
+            <div class="summary">
+            <div class="summaryline">
+            <span>Original total</span>
+            <strong>${cash(old)}</strong>
+            </div>
+            <div class="summaryline">
+            <span>Total saved</span>
+            <strong style="color:var(--green)">${cash(old - total())}</strong>
+            </div>
+            <div class="divider">
+            </div>
+            <div class="summaryline big">
+            <span>Updated total</span>
+            <span>${cash(total())}</span>
+            </div>
+            </div>
+            <div class="note ${total() <= Number(state.budget) ? 'success' : 'warn'}">${total() <= Number(state.budget) ? 'Your cart is within the target budget.' : 'Your cart is still ' + cash(total() - Number(state.budget)) + ' above the target budget.'}</div>
+            <h3 class="sectionhead">Applied replacements</h3>`;
+        let applied = base.filter(i => state.applied.has(i.id));
+        h += applied.length ? applied.map(i => `<article class="item">
+            <div class="itemhead">
+            <div class="emoji">${i.emoji}</div>
+            <div class="itemmain">
+            <div class="itemtitle">${i.alt.name}</div>
+            <div class="itemmeta">Replaced: ${i.name}<br>Saved ${cash(saved(i))}</div>
+            </div>
+            <div class="price">${cash(i.alt.price)}</div>
+            </div>
+            </article>`).join('') : '<p class="sub">No swaps have been applied.</p>';
+        h += '<button class="primary" data-action="cart">View Updated Cart</button>';
+    }
+    app.innerHTML = h;
+}
+function go(p) { state.page = p; render(); app.scrollTop = 0; }
+function generate() { let v = Number(state.budget); if (!Number.isFinite(v) || v < 0) {
+    alert('Enter a valid target budget.');
+    return;
+} state.chosen.clear(); let best = available().sort((a, b) => saved(b) - saved(a)), running = total(); for (let i of best) {
+    if (running <= v)
+        break;
+    state.chosen.add(i.id);
+    running -= saved(i);
+} go('results'); }
+app.addEventListener('input', e => { if (e.target.id === 'budget')
+    state.budget = e.target.value; });
+app.addEventListener('change', e => { let a = e.target.dataset.action, id = e.target.dataset.id; if (a === 'lock') {
+    if (e.target.checked) {
+        state.locks.add(id);
+        state.chosen.delete(id);
+    }
+    else
+        state.locks.delete(id);
+    render();
+} if (a === 'choose') {
+    if (e.target.checked)
+        state.chosen.add(id);
+    else
+        state.chosen.delete(id);
+    render();
+} });
+app.addEventListener('click', e => { let b = e.target.closest('button[data-action]'); if (!b || b.disabled)
+    return; let a = b.dataset.action; if (a === 'cart')
+    go('cart');
+else if (a === 'budget')
+    go('budget');
+else if (a === 'generate')
+    generate();
+else if (a === 'compare') {
+    state.returnTo = state.page;
+    state.compare = b.dataset.id;
+    go('compare');
+}
+else if (a === 'back')
+    go(state.page === 'compare' ? state.returnTo : state.page === 'results' ? 'budget' : 'cart');
+else if (a === 'selectcomparison') {
+    if (state.chosen.has(state.compare))
+        state.chosen.delete(state.compare);
+    else
+        state.chosen.add(state.compare);
+    go(state.returnTo);
+}
+else if (a === 'apply') {
+    for (let id of state.chosen)
+        state.applied.add(id);
+    state.chosen.clear();
+    go('done');
+} });
+render();
+function resetPrototype() {
+    state.page = 'cart';
+    state.budget = '20.00';
+    state.locks.clear();
+    state.chosen.clear();
+    state.applied.clear();
+    go('cart');
+}
+document.getElementById('resetPrototype').addEventListener('click', resetPrototype);
+    </script>
+</body>
+</html>
