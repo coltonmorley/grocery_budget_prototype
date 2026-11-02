@@ -802,10 +802,18 @@ else if (a === 'compare') {
 else if (a === 'back')
     go(state.page === 'compare' ? state.returnTo : state.page === 'results' ? 'budget' : 'cart');
 else if (a === 'selectcomparison') {
-    if (state.chosen.has(state.compare))
+    if (state.returnTo === 'cart') {
+        // Individual swap: update the cart immediately.
+        state.applied.add(state.compare);
         state.chosen.delete(state.compare);
-    else
-        state.chosen.add(state.compare);
+    }
+    else {
+        // Budget recommendations: keep swaps pending until Apply is pressed.
+        if (state.chosen.has(state.compare))
+            state.chosen.delete(state.compare);
+        else
+            state.chosen.add(state.compare);
+    }
     go(state.returnTo);
 }
 else if (a === 'apply') {
